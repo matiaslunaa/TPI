@@ -2,8 +2,8 @@
 Sistema de pedidos de comida: *backend* FastAPI + SQLModel y *frontend* React + TypeScript.
 
 - Alumno: Matias Luna
-- Repositorio GitHub: <PEGAR_URL_DEL_REPOSITORIO>
-- Video de demostración: <PEGAR_LINK_PUBLICO_DEL_VIDEO>
+- Repositorio GitHub: https://github.com/matiaslunaa/TPI
+- Video de demostración: https://youtu.be/mDqLwHsvfyo
 
 
 ## Estructura
@@ -64,10 +64,3 @@ copy .env.example .env
 pnpm install
 pnpm run dev
 ```
-
-## Flujo de demostración
-
-1. Registro de un cliente.
-2. Compra: catálogo → carrito → checkout.
-3. Como `admin`: resumen, ABM de categorías/productos, cambio de estado de pedidos, usuarios.
-4. Cancelación de un pedido y restitución del stock (se ve en el catálogo/productos).
