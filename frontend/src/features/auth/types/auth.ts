@@ -1,0 +1,27 @@
+export type Rol = "user" | "admin";
+
+export interface UsuarioPublic {
+  id: number;
+  username: string;
+  full_name: string;
+  email: string;
+  role: Rol;
+  disabled: boolean;
+  created_at: string;
+}
+
+// Lo que se guarda de la sesión en el cliente
+export interface UsuarioSesion {
+  id: number;
+  username: string;
+  full_name: string;
+  email: string;
+  role: Rol;
+}
+
+export interface RegisterPayload {
+  username: string;
+  full_name: string;
+  email: string;
+  password: string;
+}
