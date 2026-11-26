@@ -20,22 +20,17 @@ CATEGORIAS = [
     ("Postres", "Dulces para cerrar la comida"),
 ]
 
-
-def _img(nombre: str) -> str:
-    return f"/img/{nombre.replace(' ', '-').lower()}.png"
-
-
-# categoría, nombre, descripción, precio, stock
+# categoría, nombre, descripción, precio, stock, archivo de imagen
 PRODUCTOS = [
-    ("Hamburguesas", "Hamburguesa Clásica", "Carne, lechuga, tomate y queso", 6500.0, 25),
-    ("Hamburguesas", "Hamburguesa Doble Cheddar", "Doble carne y cheddar fundido", 8200.0, 20),
-    ("Hamburguesas", "Hamburguesa Veggie", "Medallón de garbanzos y vegetales", 6900.0, 15),
-    ("Pizzas", "Pizza Muzzarella", "Salsa de tomate y muzzarella", 7800.0, 18),
-    ("Pizzas", "Pizza Napolitana", "Muzzarella, tomate y ajo", 8900.0, 12),
-    ("Bebidas", "Gaseosa Cola 500ml", "Bien fría", 1800.0, 60),
-    ("Bebidas", "Limonada Casera", "Con menta y jengibre", 2200.0, 30),
-    ("Postres", "Flan con Dulce de Leche", "Casero, con crema", 3200.0, 14),
-    ("Postres", "Brownie con Helado", "Chocolate y vainilla", 4100.0, 10),
+    ("Hamburguesas", "Hamburguesa Clásica", "Carne, lechuga, tomate y queso", 6500.0, 25, "hamburguesaClasica.png"),
+    ("Hamburguesas", "Hamburguesa Doble Cheddar", "Doble carne y cheddar fundido", 8200.0, 20, "hamburguesaDoble.png"),
+    ("Hamburguesas", "Hamburguesa Veggie", "Medallón de garbanzos y vegetales", 6900.0, 15, "hamburguesaVeggie.png"),
+    ("Pizzas", "Pizza Muzzarella", "Salsa de tomate y muzzarella", 7800.0, 18, "pizzaMuzza.png"),
+    ("Pizzas", "Pizza Napolitana", "Muzzarella, tomate y ajo", 8900.0, 12, "pizzaNapo.png"),
+    ("Bebidas", "Coca Cola 500ml", "Bien fría", 1800.0, 60, "cocacola.png"),
+    ("Bebidas", "Limonada", "Con menta y jengibre", 2200.0, 30, "limonada.png"),
+    ("Postres", "Flan con Dulce de Leche", "Casero, con crema", 3200.0, 14, "flan.png"),
+    ("Postres", "Brownie con Helado", "Chocolate y vainilla", 4100.0, 10, "brownie.png"),
 ]
 
 
@@ -61,32 +56,29 @@ def run() -> None:
         else:
             print("Usuario admin ya existe.")
 
-        # Categorías
-        categorias: dict[str, Categoria] = {}
-        for nombre, descripcion in CATEGORIAS:
-            cat = session.exec(
-                select(Categoria).where(Categoria.nombre == nombre)
-            ).first()
-            if cat is None:
+        # Catálogo: solo se carga si la base todavía está vacía.
+        hay_categorias = session.exec(select(Categoria)).first() is not None
+        hay_productos = session.exec(select(Producto)).first() is not None
+
+        if hay_categorias or hay_productos:
+            print("El catálogo ya tiene datos: no se cargan categorías ni productos.")
+        else:
+            categorias: dict[str, Categoria] = {}
+            for nombre, descripcion in CATEGORIAS:
                 cat = Categoria(nombre=nombre, descripcion=descripcion)
                 session.add(cat)
                 session.flush()
+                categorias[nombre] = cat
                 print(f"Categoría creada: {nombre}")
-            categorias[nombre] = cat
 
-        # Productos
-        for cat_nombre, nombre, descripcion, precio, stock in PRODUCTOS:
-            existe = session.exec(
-                select(Producto).where(Producto.nombre == nombre)
-            ).first()
-            if existe is None:
+            for cat_nombre, nombre, descripcion, precio, stock, archivo in PRODUCTOS:
                 session.add(
                     Producto(
                         categoria_id=categorias[cat_nombre].id,
                         nombre=nombre,
                         descripcion=descripcion,
                         precio_base=precio,
-                        imagen_url=_img(nombre.replace(" ", "-").lower()),
+                        imagen_url=f"/img/{archivo}",
                         stock=stock,
                     )
                 )
